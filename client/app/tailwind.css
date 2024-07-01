@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Required for leaflet to work */
+/* .leaflet-container {
+  width: 100wh; 
+  height: 100vh;
+} */
+
+
+/* .leaflet-tooltip-pane .text {
+  color: black; 
+  font-weight: bold;
+  background: transparent;
+  border:0;
+  box-shadow: none;
+  font-size:2em;
+} */
+
+@media (hover: none) {
+  .leaflet-tooltip-pane { display: none; }
+}
+
+
+.leaflet-control-layers-overlays {
+  text-align: left;
+}
+
+.leaflet-control-layers-selector {
+  margin-left: auto;
+  margin-right: 5px;
+  float: left
+}
