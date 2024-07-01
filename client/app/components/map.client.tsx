@@ -17,8 +17,22 @@ import { LeafletEventHandlerFn } from 'leaflet';
 import { EventCallbackFunction } from '@azure/msal-browser';
 import L from 'leaflet';
 
+
 const purpleair_data: {[key: string]: [any, L.Marker]} = {};
 const station_data: {[key: string]: [any, L.Marker]} = {};
+
+interface Station {
+  lat: number;
+  lon: number;
+  StationName: string;
+  AqhiStatus: string;
+  distance?: number;
+  [key: string]: any; // Allow for other properties
+}
+
+interface StationMap {
+  [key: string]: Station;
+}
 
 export const createPurpleAirMarker = (sensor: any, add_handler: LeafletEventHandlerFn, button_function: MouseEventHandler<HTMLButtonElement>) => {
   const sensor_id = sensor[0];
@@ -71,26 +85,26 @@ export const createPurpleAirMarker = (sensor: any, add_handler: LeafletEventHand
     )
 }
 
-export const createStationMarker = (sensor: any, add_handler: LeafletEventHandlerFn) => {
+export const createStationMarker = (sensor: Station, add_handler: LeafletEventHandlerFn) => {
   return (
-    <Marker key={sensor.id} position={[sensor.latitude, sensor.longitude]} icon={createStationSensorIcon(Math.round(sensor.aqhi))}
+    <Marker key={sensor.StationKey} position={[sensor.lat, sensor.lon]} icon={createStationSensorIcon(Math.round(parseFloat(sensor.AqhiStatus)))}
     eventHandlers={{
       add: add_handler
     }}>
-    <Tooltip direction='right' offset={[20, 0]} position={[sensor.latitude, sensor.longitude]} opacity={0.9}>
+    <Tooltip direction='right' offset={[20, 0]} position={[sensor.lat, sensor.lon]} opacity={0.9}>
       <div className='text-sm p-2'>
           <h1 className='text-lg font-bold'>{sensor.location_name}</h1>
           <div className='flex flex-col items-start'>
-            <div><span className='font-bold'>Updated</span>: {new Date(sensor.observation_datetime).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric'})}</div>
+            <div><span className='font-bold'>Updated</span>: {new Date(sensor.ReadingDate).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric'})}</div>
           </div>
       </div>
       </Tooltip>
       <Popup autoClose={false} closeButton>
         <div>
-          <h1 className='text-lg font-bold w-full'>{sensor.location_name}<br/></h1>
+          <h1 className='text-lg font-bold w-full'>{sensor.StationName}<br/></h1>
           <div className='flex flex-col flex-nowrap whitespace-nowrap text-sm'>
-            <h2 className='text-sm w-full flex-1 py-2'><span className='font-bold'>Updated</span>: {(new Date(sensor.observation_datetime)).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric'})}<br/></h2>
-            <h2 className='text-sm w-full flex-1'><span className='font-bold'>AQHI</span>: {Math.round(sensor.aqhi)}<br/></h2>
+            <h2 className='text-sm w-full flex-1 py-2'><span className='font-bold'>Updated</span>: {(new Date(sensor.ReadingDate)).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric'})}<br/></h2>
+            <h2 className='text-sm w-full flex-1'><span className='font-bold'>AQHI</span>: {Math.round(parseFloat(sensor.AqhiStatus))}<br/></h2>
           </div>
         </div>
       </Popup>
@@ -124,7 +138,8 @@ export const createStationMarker = (sensor: any, add_handler: LeafletEventHandle
  };
   
 // TODO: update any to JsonifyObject
-export default function Map({ all_pm2, latitude, longitude, lat, lon }: any) {
+export default function Map({ all_pm2, latitude, longitude, lat, lon, all_station_aqhi_map}: 
+  {all_pm2: any, latitude: number, longitude: number, lat: number, lon: number, all_station_aqhi_map: StationMap}) {
 
   const [map, setMap] = useState(null);
 
@@ -181,23 +196,23 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon }: any) {
               )}
             </LayerGroup>
           </LayersControl.Overlay>
-          {/* <LayersControl.Overlay name='<span class="text-sm">Agency Monitors</span>' checked>
-            <LayerGroup> */}
+          <LayersControl.Overlay name='<span class="text-sm">Agency Monitors</span>' checked>
+            <LayerGroup>
               {/* FR27 - Indexes.Display - The system shall display the BC AQHI+ index for PurpleAir sensors and National AQHI for Agency Monitors. */}
               {/* FR28 - Agency.Sensors - The system shall display Agency Monitors via Environment and Climate Change Canada api data source along with their National AQHI. */}
-              {/* {station.map((sensor: any) => {
+              {Object.entries(all_station_aqhi_map).map(([key, sensor]) => {
                 return(
                   createStationMarker(
                   sensor,
                   // add handler
                   (event) => {
-                    station_data[sensor.id] = [sensor, event.target]
+                    station_data[sensor.StationKey] = [sensor, event.target]
                   })
                 )
               })
               }
             </LayerGroup>
-          </LayersControl.Overlay> */}
+          </LayersControl.Overlay>
           
           <LayersControl.Overlay name='<span class="text-sm">My Location</span>' checked>
             <LayerGroup>
@@ -218,7 +233,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon }: any) {
       </MapContainer>
     </div>
       ),
-    [station_data, lat, lon, all_pm2],
+    [lat, lon, all_pm2, all_station_aqhi_map],
   );
 
   return (

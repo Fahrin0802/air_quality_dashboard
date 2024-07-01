@@ -21,6 +21,10 @@ interface Station {
   [key: string]: any; // Allow for other properties
 }
 
+interface StationMap {
+  [key: string]: Station;
+}
+
 export function DashboardSearch({ sensors }: { sensors: any }) {
   const PURPLE_AIR_FIELDS="name,last_seen,pm2.5_10minute,pm2.5_30minute,pm2.5_60minute,pm2.5_6hour,pm2.5_24hour,latitude,longitude,humidity";
   const data = useRouteLoaderData<typeof loader>("root")!;
@@ -36,9 +40,12 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const [address, setAddress] = useState("");
   const addressSearchRef = useRef<HTMLElement | null>(null);
   
-  const [nearest_station_AQHI, set_nearest_station_AQHI] = useState<Station[]>([])
+  const [nearest_station_AQHI, set_nearest_station_AQHI] = useState<Station[]>([]);
+  const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<StationMap>({});
   const [nearest_pm2, set_nearest_pm2] = useState<any[][]>([]);
   const [all_pm2, set_all_pm2] = useState<any[][]>([]);
+
+
 
 
 
@@ -186,10 +193,21 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData();
   }, [lat, lon]); // Dependency array ensures the effect runs when lat or lon change
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        set_all_station_aqhi_map(await fetch_ACA_Station_AQHI());
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []); 
+
+  
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -310,7 +328,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           </>
         )}
 
-        <Map all_pm2={all_pm2} latitude={53.5461} longitude={-113.4937} lat={lat} lon={lon}/>
+          <Map all_pm2={all_pm2} latitude={53.5461} longitude={-113.4937} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map}/>
       </div>
     )
   }, [lat, lon, display_popup, all_pm2])
@@ -360,7 +378,6 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     setLat(result.position.lat);
                     setLon(result.position.lon);
                     
-                    const all_station_aqhi_map = await fetch_ACA_Station_AQHI();
                     set_nearest_station_AQHI(add_distance_to_ACA_station(all_station_aqhi_map, result.position.lat, result.position.lon));
                     
                     const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, result.position.lat, result.position.lon) ;
