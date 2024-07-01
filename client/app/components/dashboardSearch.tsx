@@ -257,8 +257,8 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                   {/* GEOMET API STATIONS */}
                   <div className="flex-1 bg-white rounded-lg shadow m-1 p-4 overflow-x-auto">
-                    <h4 className="block text-med font-medium border-b text-black-700 text-center"> Continuous Monitoring Stations</h4>
-                    <h4 className="block text-med font-medium text-gray-700 text-center"> (NO2, O3, PM2.5) </h4>
+                    <h4 className="block text-med font-medium border-b text-black-700 text-center"> Continuous Monitoring Stations (NO2, O3, PM2.5)</h4>
+                    {/* <h4 className="block text-med font-medium text-gray-700 text-center"> (NO2, O3, PM2.5) </h4> */}
                       <p className="text-center p-2">
                           {/* <strong style={{ fontSize: '20px' }}> */}
                               Community AQHI: {community_AQHI}
@@ -268,7 +268,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                       <thead>
                         <tr>
                           <th className="px-4 py-2 text-center border-b border-gray-300">Station</th>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">National AQHI</th>
+                          <th className="px-4 py-2 text-center border-b border-gray-300">AQHI</th>
                           <th className="px-4 py-2 text-center border-b border-gray-300">Distance (km)</th>
                         </tr>
                       </thead>
@@ -287,6 +287,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                    {/* PURPLE AIR MONITORS  */}
                   <div className="flex-1 bg-white rounded-lg shadow-md m-1 p-4 overflow-x-auto">
                     <h4 className="block text-med font-medium border-b text-black-700 text-center">Microsensors (PM 2.5)</h4>
+                    <p className="text-center p-2">
+                         
+                    </p>
                     <table className="min-w-full">
                       <thead>
                         <tr>
@@ -300,12 +303,14 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                           <tr key={index}>
                             <td className="px-4 py-2 text-center">{sensor[2]}</td>
                             <td className="px-4 py-2 text-center">{sensor[8]}</td>
-                            <td className="px-4 py-2 text-center">{sensor[11]}</td>
+                            <td className="px-4 py-2 text-center">{sensor[11].toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div> 
+
+                  <img src="/img/pm2_scale.png" className="mx-auto my-4 w-30 h-90"/>
                 </div>
 
                 <div className="flex justify-center mt-4">

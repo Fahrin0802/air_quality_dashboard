@@ -158,7 +158,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
   
   /* FR1 - Map.View - The system should display a world map marking the locations of all PurpleAir sensors in the Edmonton Area using Leaflet and OpenStreetMap. */
   const displayMap = useMemo(() => (
-      <div data-testid="map" style={{height: "100%"}}>
+      <div data-testid="map" style={{height: "85%"}}>
       {/* FR3 - Map.Interact - The system should allow a user to pan the map in any direction as well as zooming in and out. */}
       {/* @ts-ignore */}
       <MapContainer ref={setMap} center={[latitude, longitude]} zoom={11} scrollWheelZoom={true} className='z-40 min-h-full text-center' tap={false} doubleClickZoom>
@@ -200,7 +200,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
             <LayerGroup>
               {/* FR27 - Indexes.Display - The system shall display the BC AQHI+ index for PurpleAir sensors and National AQHI for Agency Monitors. */}
               {/* FR28 - Agency.Sensors - The system shall display Agency Monitors via Environment and Climate Change Canada api data source along with their National AQHI. */}
-              {Object.entries(all_station_aqhi_map).map(([key, sensor]) => {
+              {/* {Object.entries(all_station_aqhi_map).map(([key, sensor]) => {
                 return(
                   createStationMarker(
                   sensor,
@@ -210,7 +210,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
                   })
                 )
               })
-              }
+              } */}
             </LayerGroup>
           </LayersControl.Overlay>
           
@@ -233,7 +233,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
       </MapContainer>
     </div>
       ),
-    [lat, lon, all_pm2, all_station_aqhi_map],
+    [lat, lon, all_pm2],
   );
 
   return (
