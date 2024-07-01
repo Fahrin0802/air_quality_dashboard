@@ -207,7 +207,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
     fetchData();
   }, []); 
 
-  
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -377,7 +377,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     extractCommunityAQHI(extractCityName(result.address.freeformAddress));
                     setLat(result.position.lat);
                     setLon(result.position.lon);
-                    
+
+                    const x = await fetch_ACA_Station_AQHI();
+                    set_all_station_aqhi_map(x);
                     set_nearest_station_AQHI(add_distance_to_ACA_station(all_station_aqhi_map, result.position.lat, result.position.lon));
                     
                     const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, result.position.lat, result.position.lon) ;
