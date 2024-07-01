@@ -1,0 +1,85 @@
+{
+  "name": "client",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "build": "remix build",
+    "dev": "remix dev --manual",
+    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "start": "remix-serve ./build/index.js",
+    "typecheck": "tsc",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [],
+    "moduleDirectories": [
+      "<rootDir>/tests",
+      "<rootDir>",
+      "node_modules"
+    ],
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/tests/style.mock.js"
+    }
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.0.0",
+    "@azure/msal-browser": "^3.10.0",
+    "@azure/msal-react": "^2.0.12",
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
+    "@remix-run/css-bundle": "^2.8.0",
+    "@remix-run/node": "^2.8.0",
+    "@remix-run/react": "^2.8.0",
+    "@remix-run/serve": "^2.8.0",
+    "@remix-run/testing": "^2.8.1",
+    "@tailwindcss/forms": "^0.5.7",
+    "d3": "^7.9.0",
+    "geolib": "^3.3.4",
+    "isbot": "^4.1.0",
+    "jest-fetch-mock": "^3.0.3",
+    "leaflet": "^1.9.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "remix-utils": "^7.5.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.24.1",
+    "@jest/globals": "^29.7.0",
+    "@remix-run/dev": "^2.8.0",
+    "@testing-library/react": "^14.2.2",
+    "@types/d3": "^7.4.3",
+    "@types/jest": "^29.5.12",
+    "@types/leaflet": "^1.9.8",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-test-renderer": "^18.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.38.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "react-test-renderer": "^18.2.0",
+    "regenerator-runtime": "^0.14.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
