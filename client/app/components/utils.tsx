@@ -2,23 +2,6 @@
 
 export const MIN_DISTANCE = 0.1;
 
-// Function to sort sensors based on the distance with target
-export function getSensorsWithDistance(lat: number, lon: number, sensors: any[]) {
-    const result = [];
-
-    for (const sensor of sensors) {
-      const distance = calculateDistance(
-        lat,
-        lon,
-        sensor.latitude,
-        sensor.longitude
-      );
-      result.push({ ...sensor, distance });
-    }
-    result.sort((a, b) => a.distance - b.distance);
-    return result;
-}
-
 // Function to calculate distance between two geographical coordinates (Haversine formula)
 function calculateDistance(
   lat1: number,
@@ -70,26 +53,29 @@ async function fetch_ACA_Station_AQHI() {
 
   try {
       const response = await fetch(fetchUrl)
-      console.log(response);
-      
+
       if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      return data;
+
+      const map = new Map();
+      for (const [key, value] of Object.entries(data)) {
+          map.set(String(key), value);
+      }
+      map.delete('_id');
+      return map;
+      
   } catch (error) {
       console.error('Error fetching air quality data:', error);
       throw error;
   }
 }
 
-function add_distance_to_ACA_station(all_station_aqhi_map: StationMap, ulat: number, ulon: number): Station[] {
-  // Delete the _id key-value pair if it exists
-  const keyToDelete = '_id';
-  delete all_station_aqhi_map[keyToDelete];
+function add_distance_to_ACA_station(all_station_aqhi_map: Map<any, any>, ulat: number, ulon: number): Station[] {
 
   // Calculate distances and store them in an array
-  const entriesWithDistance = Object.entries(all_station_aqhi_map).map(([key, value]) => {
+  const entriesWithDistance = Array.from(all_station_aqhi_map).map(([key, value]) => {
       if (value && typeof value === 'object' && 'lat' in value && 'lon' in value) {
           const distance = calculateDistance(value['lat'], value['lon'], ulat, ulon);
           return { key, value: { ...value, distance } }; // Spread operator to retain other properties

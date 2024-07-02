@@ -43,7 +43,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const addressSearchRef = useRef<HTMLElement | null>(null);
   
   const [nearest_station_AQHI, set_nearest_station_AQHI] = useState<Station[]>([]);
-  const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<StationMap>({});
+  const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<Map<any, any>>({});
   const [nearest_pm2, set_nearest_pm2] = useState<any[][]>([]);
   const [all_pm2, set_all_pm2] = useState<any[][]>([]);
 
@@ -114,23 +114,13 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
     const fetchData = async () => {
       try {
         set_all_pm2(await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, lat, lon));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, [lat, lon]); // Dependency array ensures the effect runs when lat or lon change
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
         set_all_station_aqhi_map(await fetch_ACA_Station_AQHI());
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, []); 
+  }, [lat, lon]); // Dependency array ensures the effect runs when lat or lon change
 
 
   useEffect(() => {
@@ -261,7 +251,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           <Map all_pm2={all_pm2} latitude={53.5461} longitude={-113.4937} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map}/>
       </div>
     )
-  }, [lat, lon, display_popup, all_pm2])
+  }, [lat, lon, display_popup, all_pm2, all_station_aqhi_map])
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 w-full max-w-4xl mb-4">

@@ -139,7 +139,7 @@ export const createStationMarker = (sensor: Station, add_handler: LeafletEventHa
   
 // TODO: update any to JsonifyObject
 export default function Map({ all_pm2, latitude, longitude, lat, lon, all_station_aqhi_map}: 
-  {all_pm2: any, latitude: number, longitude: number, lat: number, lon: number, all_station_aqhi_map: StationMap}) {
+  {all_pm2: any, latitude: number, longitude: number, lat: number, lon: number, all_station_aqhi_map: Map<any, any>}) {
 
   const [map, setMap] = useState(null);
 
@@ -200,7 +200,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
             <LayerGroup>
               {/* FR27 - Indexes.Display - The system shall display the BC AQHI+ index for PurpleAir sensors and National AQHI for Agency Monitors. */}
               {/* FR28 - Agency.Sensors - The system shall display Agency Monitors via Environment and Climate Change Canada api data source along with their National AQHI. */}
-              {/* {Object.entries(all_station_aqhi_map).map(([key, sensor]) => {
+              { Array.from(all_station_aqhi_map).map(([key, sensor]) => {
                 return(
                   createStationMarker(
                   sensor,
@@ -210,7 +210,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
                   })
                 )
               })
-              } */}
+            }
             </LayerGroup>
           </LayersControl.Overlay>
           
@@ -233,7 +233,7 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
       </MapContainer>
     </div>
       ),
-    [lat, lon, all_pm2],
+    [lat, lon, all_pm2, all_station_aqhi_map],
   );
 
   return (
