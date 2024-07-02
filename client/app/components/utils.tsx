@@ -157,10 +157,58 @@ async function get_purpleair_sensor_data(fields: string, ulat: number, ulon: num
   }
 }
 
+async function fetch_ACA_Community_AQHI(community_name: string) {
+  const url = 'https://air-quality-data-transfer.azurewebsites.net/api/ACA_community_AQHI';
+  const params = {
+      code: 'ZM7nXmW1vyvoYqfau3jQJk94VpnZ0qf49cIRZHyGEN0XAzFuTcNKoQ=='
+  };
+  
+  const queryString = new URLSearchParams(params).toString();
+  const fetchUrl = `${url}?${queryString}`;
+
+  try {
+      const response = await fetch(fetchUrl);
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      const map = new Map();
+
+      for (const [key, value] of Object.entries(data)) {
+          map.set(String(key), String(value));
+      }
+      console.log(community_name, map);
+      return map.get(community_name);
+
+  } catch (error) {
+      console.error('Error fetching air quality data:', error);
+      throw error;
+  }
+}
+
+function extractCityName(input_address: any) {
+  // Regular expression to match the pattern where city name is usually found
+  // This regex captures everything before the two-letter state/province code
+  const cityRegex = /, ([a-zA-Z\s]+) [A-Z]{2} \w{2,6}/;
+  // Test the regex on the address
+  const match = input_address.match(cityRegex);
+
+  if (match && match[1]) {
+      // Return the captured city name
+      return match[1].trim();
+  } else {
+      // If no match found, return an appropriate message or handle error
+      return 'City name not found';
+  }
+}
+
 export { 
   calculateDistance,
+  extractCityName,
   get_purpleair_sensor_data,
   get_three_closest_purple_sensors,
   fetch_ACA_Station_AQHI,
   add_distance_to_ACA_station,
+  fetch_ACA_Community_AQHI
 };

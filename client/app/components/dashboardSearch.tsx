@@ -6,10 +6,12 @@ import { useGlobalLoadingState } from "remix-utils/use-global-navigation-state";
 import { renderToString } from "react-dom/server";
 
 import {
+  extractCityName,
   get_purpleair_sensor_data,
   get_three_closest_purple_sensors,
   fetch_ACA_Station_AQHI,
   add_distance_to_ACA_station,
+  fetch_ACA_Community_AQHI
 } from "./utils"
 
 interface Station {
@@ -35,7 +37,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const [lon, setLon] = useState<number>(-113.0000);
   const [display_popup, set_display_popup] = useState(false);
   
-  const [community_AQHI, set_community_AQHI ] = useState<string | undefined>(undefined);
+  const [community_AQHI, set_community_AQHI ] = useState<string>("");
   const [addressSearchResults, setAddressSearchResults] = useState([]);
   const [address, setAddress] = useState("");
   const addressSearchRef = useRef<HTMLElement | null>(null);
@@ -44,9 +46,6 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<StationMap>({});
   const [nearest_pm2, set_nearest_pm2] = useState<any[][]>([]);
   const [all_pm2, set_all_pm2] = useState<any[][]>([]);
-
-
-
 
 
   const toggle_popup = () => {
@@ -87,83 +86,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
     }
   }
 
-  const extractCityName = (input_address: any) => {
-    // Regular expression to match the pattern where city name is usually found
-    // This regex captures everything before the two-letter state/province code
-    const cityRegex = /, ([a-zA-Z\s]+) [A-Z]{2} \w{2,6}/;
-    // Test the regex on the address
-    const match = input_address.match(cityRegex);
-
-    if (match && match[1]) {
-        // Return the captured city name
-        return match[1].trim();
-    } else {
-        // If no match found, return an appropriate message or handle error
-        return 'City name not found';
-    }
-  }
-
-  const extractCommunityAQHI = (input_city: string) => {
-    // GET COMUNITY MAP FROM BACKEND HERE
-    // const AQHI_community_map: Map<string, string> = new Map([
-    //   ['Airdrie', '2.00000'],
-    //   ['Aldersyde', '-1'],
-    //   ['Anzac', '2.00000'],
-    //   ['Beaverlodge', '2.00000'],
-    //   ['Bonnyville', '-1'],
-    //   ['Brooks', '2.00000'],
-    //   ['Bruderheim', '2.00000'],
-    //   ['Cadotte Lake', '-1'],
-    //   ['Calgary', '2.00000'],
-    //   ['Canmore', '-1'],
-    //   ['Caroline', '2.00000'],
-    //   ['Chestermere', '-1'],
-    //   ['Chipman', '-1'],
-    //   ['Cochrane', '-1'],
-    //   ['Cold Lake', '2.00000'],
-    //   ['Conklin', '2.00000'],
-    //   ['Drayton Valley', '2.00000'],
-    //   ['Edmonton', '2.00000'],
-    //   ['Edson', '2.00000'],
-    //   ['Elk Island', '2.00000'],
-    //   ['Fort Chipewyan', '-1'],
-    //   ['Fort McKay', '2.00000'],
-    //   ['Fort McKay South', '2.00000'],
-    //   ['Fort McMurray', '2.00000'],
-    //   ['Fort Saskatchewan', '2.00000'],
-    //   ['Fox Creek', '2.00000'],
-    //   ['Genesee', '2.00000'],
-    //   ['Gibbons', '2.00000'],
-    //   ['Grande Prairie', '2.00000'],
-    //   ['Grimshaw', '2.00000'],
-    //   ['High Level', '2.00000'],
-    //   ['High River', '-1'],
-    //   ['Hinton', '2.00000'],
-    //   ['Janvier', '2.00000'],
-    //   ['Lac La Biche', '2.00000'],
-    //   ['Lamont', '2.00000'],
-    //   ['Lamont County', '-1'],
-    //   ['Leduc (Sensor)', '2.00000'],
-    //   ['Lethbridge', '2.00000'],
-    //   ['Lowe Lake', '2.00000'],
-    //   ['Marie Lake', '2.00000'],
-    //   ['Medicine Hat', '2.00000'],
-    //   ['Red Deer', '2.00000'],
-    //   ['Redwater', '2.00000'],
-    //   ['St. Albert', '2.00000'],
-    //   ['St. Lina', '2.00000'],
-    //   ['Steeper', '2.00000'],
-    //   ['Stony Mountain', '-1'],
-    //   ['Strathcona County', '2.00000'],
-    //   ['Sturgeon County Portable', '-1'],
-    //   ['Taber', '2.00000'],
-    //   ['Thorhild County', '2.00000'],
-    //   ['Tomahawk', '-1'],
-    //   ['Wembley', '-1']
-    // ]); 
-
-    // set_community_AQHI(AQHI_community_map.get(input_city));
-    set_community_AQHI('2.000');
+  const extractCommunityAQHI = async (input_city: string) => {
+    const community_aqhi = await fetch_ACA_Community_AQHI(input_city);
+    set_community_AQHI(community_aqhi);
   }
 
   // Gets the current lat and lon and stores it in the global variables
@@ -261,7 +186,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     {/* <h4 className="block text-med font-medium text-gray-700 text-center"> (NO2, O3, PM2.5) </h4> */}
                       <p className="text-center p-2">
                           {/* <strong style={{ fontSize: '20px' }}> */}
-                              Community AQHI: {community_AQHI}
+                              Community AQHI: {parseFloat(community_AQHI).toFixed(2)}
                           {/* </strong> */}
                       </p>
                       <table className="min-w-full">
