@@ -33,8 +33,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const env = data?.env;
   
   // MY LAT AND LON TO SHOW MY POSITION ON MAP
-  const [lat, setLat] = useState<number>(53.0000);
-  const [lon, setLon] = useState<number>(-113.0000);
+  const [map, setMap] = useState(null);
+  const [lat, setLat] = useState<number>(53.5461);
+  const [lon, setLon] = useState<number>(-113.4937);
   const [display_popup, set_display_popup] = useState(false);
   
   const [community_AQHI, set_community_AQHI ] = useState<string>("");
@@ -144,19 +145,20 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
 
     let worst_value = 0;
 
-    // nearest_stations.forEach((station) => {
-    //   if (station.aqhi && station.aqhi > worst_value) {
-    //     worst_value = station.aqhi;
-    //   }
-    // });
+    nearest_station_AQHI.forEach((station) => {
+      if (station.AqhiStatus && parseFloat(station.AqhiStatus) > worst_value) {
+        worst_value = parseFloat(station.AqhiStatus);
+      }
+    });
   
-    // nearest_sensors.forEach((sensor) => {
+    
+    // nearest_pm2.forEach((sensor) => {
     //   if (sensor.aqhi_plus && sensor.aqhi_plus > worst_value) {
     //     worst_value = sensor.aqhi_plus;
     //   }
     // });
   
-    // worst_value = Math.round(worst_value);
+    worst_value = Math.round(worst_value);
 
     return (
       <div className="w-full mt-4 overflow-hidden"> 
@@ -229,11 +231,11 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                 </div>
 
                 <div className="flex justify-center mt-4">
-                  {/* <p className="bg-yellow-200 text-center rounded border p-2">
+                  <p className="bg-yellow-200 text-center rounded border p-2">
                     <strong style={{ fontSize: '24px' }}>
                         Follow <a href="https://www.canada.ca/en/environment-climate-change/services/air-quality-health-index/understanding-messages.html" className="text-blue-500 underline">recommendations</a> for an AQHI of {worst_value}
                     </strong>
-                  </p> */}
+                  </p>
                 </div>
                 <img src="/img/xAQHI.png" className="mx-auto my-4 w-96 h-30"/>
 
@@ -248,10 +250,10 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           </>
         )}
 
-          <Map all_pm2={all_pm2} latitude={53.5461} longitude={-113.4937} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map}/>
+          <Map all_pm2={all_pm2} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map} map={map} setMap={setMap}/>
       </div>
     )
-  }, [lat, lon, display_popup, all_pm2, all_station_aqhi_map])
+  }, [lat, lon, map, display_popup, all_pm2, all_station_aqhi_map])
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 w-full max-w-4xl mb-4">

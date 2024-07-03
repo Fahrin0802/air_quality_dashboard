@@ -1,5 +1,6 @@
 // This component covers Functional Requirements 1, 3, 5, 6, 7, 27, 28, 29, 30
-import { LayerGroup, LayersControl, MapContainer, Marker, Popup, ScaleControl, TileLayer, Tooltip } from 'react-leaflet'
+import { LayerGroup, LayersControl, MapContainer, MapContainerProps, 
+  Marker, Popup, ScaleControl, TileLayer, Tooltip, useMap} from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 import { LocationControl } from "./LocationControl";
 import { LegendControl } from "./LegendControl";
@@ -138,12 +139,8 @@ export const createStationMarker = (sensor: Station, add_handler: LeafletEventHa
  };
   
 // TODO: update any to JsonifyObject
-export default function Map({ all_pm2, latitude, longitude, lat, lon, all_station_aqhi_map}: 
-  {all_pm2: any, latitude: number, longitude: number, lat: number, lon: number, all_station_aqhi_map: Map<any, any>}) {
-
-  const [map, setMap] = useState(null);
-
-  // const station = sensors.station
+export default function Map({ all_pm2, lat, lon, all_station_aqhi_map, map, setMap}: 
+  {all_pm2: any, lat: number, lon: number, all_station_aqhi_map: Map<any, any>, map: any, setMap: any}) {
 
   const [plotDetails, setPlotDetails] = useState<any | null>({ show: false, sensorId: null });
 
@@ -154,15 +151,21 @@ export default function Map({ all_pm2, latitude, longitude, lat, lon, all_statio
   const hidePlot = () => {
     setPlotDetails({ ...plotDetails, show: false });
   };
-  
-  
+
+  // const mapRef = useMap();
+  // useEffect(() => {
+  //   if (mapRef) {
+  //     mapRef.setView([lat, lon], 11);
+  //   }
+  // }, [mapRef, lat, lon]);
+
+
   /* FR1 - Map.View - The system should display a world map marking the locations of all PurpleAir sensors in the Edmonton Area using Leaflet and OpenStreetMap. */
   const displayMap = useMemo(() => (
-      <div data-testid="map" style={{height: "85%"}}>
+    <div data-testid="map" style={{height: "85%"}}>
       {/* FR3 - Map.Interact - The system should allow a user to pan the map in any direction as well as zooming in and out. */}
       {/* @ts-ignore */}
-      <MapContainer ref={setMap} center={[latitude, longitude]} zoom={11} scrollWheelZoom={true} className='z-40 min-h-full text-center' tap={false} doubleClickZoom>
-        
+      <MapContainer ref={setMap} center={[lat, lon]} zoom={11} scrollWheelZoom={true} className='z-40 min-h-full text-center' tap={false} doubleClickZoom>
         <ScaleControl position='bottomleft'/>
         <LocationControl position='topleft' />
         <LegendControl position='bottomright' />

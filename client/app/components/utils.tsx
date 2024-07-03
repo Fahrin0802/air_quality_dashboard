@@ -95,8 +95,11 @@ function add_distance_to_ACA_station(all_station_aqhi_map: Map<any, any>, ulat: 
 
   // Create an array for the top 3 entries
   const top3Array: Station[] = top3Entries.map(entry => entry.value);
+  //fahrin
+  console.log(top3Array);
 
   return top3Array;
+
 }
 
 function get_three_closest_purple_sensors(data: any[][]): any[][] {
