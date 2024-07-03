@@ -96,11 +96,21 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
           setLat(latitude);
           setLon(longitude);
           setAddress("Current Location");
+          extractCommunityAQHI("xx");
+
+          const x = await fetch_ACA_Station_AQHI();
+          set_all_station_aqhi_map(x);
+          set_nearest_station_AQHI(add_distance_to_ACA_station(x, latitude, longitude));
+          
+          const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, latitude, longitude) ;
+          set_nearest_pm2(get_three_closest_purple_sensors(bushra));
+          
+          toggle_popup();
         },
         (error) => {
           console.error("Error getting user location:", error);
