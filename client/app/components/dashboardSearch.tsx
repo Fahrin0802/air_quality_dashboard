@@ -102,6 +102,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           setLon(longitude);
           setAddress("Current Location");
           extractCommunityAQHI("xx");
+          console.log(position);
 
           const x = await fetch_ACA_Station_AQHI();
           set_all_station_aqhi_map(x);
