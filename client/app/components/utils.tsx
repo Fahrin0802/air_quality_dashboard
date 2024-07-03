@@ -201,3 +201,56 @@ export {
   add_distance_to_ACA_station,
   fetch_ACA_Community_AQHI
 };
+
+
+// const getCurrentLocation = () => {
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(
+//       async (position) => {
+//         const { latitude, longitude } = position.coords;
+//         setLat(latitude);
+//         setLon(longitude);
+        
+//         // Fetch the address using reverse geocoding
+//         const address = await getFullAddress(latitude, longitude);
+//         setAddress(address);
+        
+//         extractCommunityAQHI("xx");
+
+//         const x = await fetch_ACA_Station_AQHI();
+//         set_all_station_aqhi_map(x);
+//         set_nearest_station_AQHI(add_distance_to_ACA_station(x, latitude, longitude));
+
+//         const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, latitude, longitude);
+//         set_nearest_pm2(get_three_closest_purple_sensors(bushra));
+
+//         toggle_popup();
+//       },
+//       (error) => {
+//         console.error("Error getting user location:", error);
+//       }
+//     );
+//   } else {
+//     console.error("Geolocation is not supported by this browser.");
+//   }
+// };
+
+const getFullAddress = async (lat: number, lon: number) => {
+  const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your API key
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`;
+  
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.status === 'OK') {
+      const address = data.results[0].formatted_address;
+      return address;
+    } else {
+      console.error('Error fetching address:', data.status);
+      return "Address not found";
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return "Address not found";
+  }
+};

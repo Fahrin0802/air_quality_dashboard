@@ -152,14 +152,6 @@ export default function Map({ all_pm2, lat, lon, all_station_aqhi_map, map, setM
     setPlotDetails({ ...plotDetails, show: false });
   };
 
-  // const mapRef = useMap();
-  // useEffect(() => {
-  //   if (mapRef) {
-  //     mapRef.setView([lat, lon], 11);
-  //   }
-  // }, [mapRef, lat, lon]);
-
-
   /* FR1 - Map.View - The system should display a world map marking the locations of all PurpleAir sensors in the Edmonton Area using Leaflet and OpenStreetMap. */
   const displayMap = useMemo(() => (
     <div data-testid="map" style={{height: "85%"}}>

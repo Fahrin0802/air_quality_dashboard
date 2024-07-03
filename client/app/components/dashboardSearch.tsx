@@ -11,7 +11,8 @@ import {
   get_three_closest_purple_sensors,
   fetch_ACA_Station_AQHI,
   add_distance_to_ACA_station,
-  fetch_ACA_Community_AQHI
+  fetch_ACA_Community_AQHI,
+  calculateDistance
 } from "./utils"
 
 interface Station {
@@ -102,14 +103,22 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           setLon(longitude);
           setAddress("Current Location");
           extractCommunityAQHI("xx");
-          console.log(position);
 
           const x = await fetch_ACA_Station_AQHI();
           set_all_station_aqhi_map(x);
           set_nearest_station_AQHI(add_distance_to_ACA_station(x, latitude, longitude));
           
-          const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, latitude, longitude) ;
-          set_nearest_pm2(get_three_closest_purple_sensors(bushra));
+          var purple_with_distance: any[] = [];
+          if (all_pm2.length == 0 ){
+            purple_with_distance = all_pm2.map(item => {
+              item[11] = calculateDistance(item[3], item[4], latitude, latitude);
+              return item;
+            });
+          }
+          else{
+            purple_with_distance = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, latitude, longitude) ;
+          }
+          set_nearest_pm2(get_three_closest_purple_sensors(purple_with_distance));
           
           toggle_popup();
         },
@@ -175,13 +184,15 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
       <div className="w-full mt-4 overflow-hidden"> 
         
         {display_popup && (
-          <>
+        <>
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggle_popup}></div>
-          <div className="fixed inset-0 flex items-center justify-end z-50 pr-100 md:pr-128 lg:pr-128 xl:pr-128">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="text-center">
-                {/* <p>My name is Amina Hussein XOXO</p> */}
-                
+          <div className="fixed inset-0 flex items-center justify-center md:justify-end z-50 pr-4 md:pr-8 lg:pr-12 xl:pr-16">
+            <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg 
+                max-w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl 
+                h-4/5 md:h-auto lg:h-auto xl:h-au overflow-y-auto transform scale-75"
+            >
+            <div className="text-center">
+
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                   {/* GEOMET API STATIONS */}
                   <div className="flex-1 bg-white rounded-lg shadow m-1 p-4 overflow-x-auto">
@@ -195,17 +206,17 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                       <table className="min-w-full">
                       <thead>
                         <tr>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">Station</th>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">AQHI</th>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">Distance (km)</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">Station</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">AQHI</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">Distance (km)</th>
                         </tr>
                       </thead>
                       <tbody>
                         {nearest_station_AQHI.map((sensor, index) => (
                           <tr key={index}>
-                            <td className="px-4 py-2 text-center">{sensor.StationName}</td>
-                            <td className="px-4 py-2 text-center">{sensor.AqhiStatus}</td>
-                            <td className="px-4 py-2 text-center">{sensor.distance ? sensor.distance.toFixed(2) : 0 }</td>
+                            <td className="px-3 py-1.5 text-center">{sensor.StationName}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor.AqhiStatus}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor.distance ? sensor.distance.toFixed(2) : 0 }</td>
                           </tr>
                         ))}
                       </tbody>
@@ -221,17 +232,17 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     <table className="min-w-full">
                       <thead>
                         <tr>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">Sensor ID</th>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">PM2.5</th>
-                          <th className="px-4 py-2 text-center border-b border-gray-300">Distance (km)</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">Sensor ID</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">PM2.5</th>
+                          <th className="px-3 py-1.5 text-center border-b border-gray-300">Distance (km)</th>
                         </tr>
                       </thead>
                       <tbody>
                         {nearest_pm2.map((sensor, index) => (
                           <tr key={index}>
-                            <td className="px-4 py-2 text-center">{sensor[2]}</td>
-                            <td className="px-4 py-2 text-center">{sensor[8]}</td>
-                            <td className="px-4 py-2 text-center">{sensor[11].toFixed(2)}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor[2]}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor[8]}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -243,7 +254,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
 
                 <div className="flex justify-center mt-4">
                   <p className="bg-yellow-200 text-center rounded border p-2">
-                    <strong style={{ fontSize: '24px' }}>
+                    <strong style={{ fontSize: '18px' }}>
                         Follow <a href="https://www.canada.ca/en/environment-climate-change/services/air-quality-health-index/understanding-messages.html" className="text-blue-500 underline">recommendations</a> for an AQHI of {worst_value}
                     </strong>
                   </p>
@@ -315,8 +326,18 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     set_all_station_aqhi_map(x);
                     set_nearest_station_AQHI(add_distance_to_ACA_station(x, result.position.lat, result.position.lon));
                     
-                    const bushra = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, result.position.lat, result.position.lon) ;
-                    set_nearest_pm2(get_three_closest_purple_sensors(bushra));
+                    var purple_with_distance: any[] = [];
+                    if (all_pm2.length == 0 ){
+                      purple_with_distance = all_pm2.map(item => {
+                        item[11] = calculateDistance(item[3], item[4], result.position.lat, result.position.lon);
+                        return item;
+                      });
+                    }
+                    else{
+                      purple_with_distance = await get_purpleair_sensor_data(PURPLE_AIR_FIELDS, result.position.lat, result.position.lon) ;
+                    }
+
+                    set_nearest_pm2(get_three_closest_purple_sensors(purple_with_distance));
                     
                     toggle_popup();
                     setAddressSearchResults([]);

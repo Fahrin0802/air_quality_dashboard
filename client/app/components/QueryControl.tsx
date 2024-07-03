@@ -134,7 +134,7 @@ export default function QueryControl({props, data}: { props: L.ControlOptions; d
               query[sensor.id] = sensor_button
 
               sensor_button.onclick = () => {
-                map.setView([sensor.latitude, sensor.longitude], 15)
+                map.setView([sensor[3], sensor[4]], 15)
               }
             }
           });
