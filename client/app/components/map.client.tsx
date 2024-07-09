@@ -12,11 +12,12 @@ import Plot from './Plot';
 
 import { useEffect, useRef } from 'react';
 
-import { createStationSensorIcon, createPurpleAirSensorIcon } from './leaflet-utils';
+import { createStationSensorIcon, createPurpleAirSensorIcon, getColor} from './leaflet-utils';
 import HighlightControl from './HighlightControl';
 import { LeafletEventHandlerFn } from 'leaflet';
 import { EventCallbackFunction } from '@azure/msal-browser';
 import L from 'leaflet';
+import {corrected_pm25, health_recommendation, AQHI_PLUS} from './utils';
 
 
 const purpleair_data: {[key: string]: [any, L.Marker]} = {};
@@ -41,26 +42,48 @@ export const createPurpleAirMarker = (sensor: any, add_handler: LeafletEventHand
   const sensor_name = sensor[2];
   const sensor_lat = sensor[3];
   const sensor_lon = sensor[4];
-  const sensor_humidity = sensor[5];
-  const sensor_pm2_10 = sensor[6];
-  const sensor_pm2_30 = sensor[7];
-  const sensor_pm2_60 = sensor[8];
-  const sensor_pm2_6 = sensor[9];
-  const sensor_pm2_24 = sensor[10];
+  let sensor_humidity = sensor[5];
+  if (sensor_humidity < 30){
+    sensor_humidity = 30;
+  }
+  else if (sensor_humidity > 70){
+    sensor_humidity = 70;
+  }
+
+  // const sensor_pm2_10 = sensor[6];
+  // const sensor_pm2_30 = sensor[7];
+  // const sensor_pm2_60 = sensor[8];
+
+  const sensor_pm2_10 = corrected_pm25(sensor[6], sensor_humidity).toFixed(2);
+  const sensor_pm2_30 = corrected_pm25(sensor[7], sensor_humidity).toFixed(2);
+  const sensor_pm2_60 = corrected_pm25(sensor[8], sensor_humidity).toFixed(2);
+  const sensor_pm2_6 = corrected_pm25(sensor[9], sensor_humidity).toFixed(2);
+  const sensor_pm2_24 = corrected_pm25(sensor[10], sensor_humidity).toFixed(2);
   const sensor_distance = sensor[11];
+  const sensor_corrected_pm25 = sensor[12];
+  const sensor_AQHI_plus = sensor[13];
   
   return (
-    <Marker key={sensor_id} position={[sensor_lat, sensor_lon]} opacity={1} icon={createPurpleAirSensorIcon(sensor_pm2_60)} eventHandlers={{ add: add_handler}}>
+    <Marker key={sensor_id} position={[sensor_lat, sensor_lon]} opacity={1} icon={createPurpleAirSensorIcon(sensor_corrected_pm25, sensor_AQHI_plus)} eventHandlers={{ add: add_handler}}>
       
       {/* FR6 - Load.Sensor.Data - The system shall load the sensor data retrieved from the PurpleAir API based on the sensor. */}
       <Tooltip direction='right' offset={[20, 0]} position={[sensor_lat, sensor_lon]} opacity={0.9}>
-        <div className='text-sm'>
-            <h1 className='text-lg font-bold'>{sensor_name}</h1>
-            <div className='flex flex-col items-start px-2'>
-              <div><span className='font-bold'>Updated:</span> {(new Date(sensor_ts*1000)).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric'})}<br /></div>
-              <div><span className='font-bold'>10 min.</span> Average <span className='font-bold'>{sensor_pm2_10}</span> μg m<sup>-3</sup></div>
-              <div><span className='font-bold'>30 min.</span> Average <span className='font-bold'>{sensor_pm2_30}</span> μg m<sup>-3</sup></div>
-              <div><span className='font-bold'>1 hr.</span> Average <span className='font-bold'>{sensor_pm2_60}</span> μg m<sup>-3</sup></div>
+
+        <div className={`text-sm ${getColor(sensor_AQHI_plus)}`}  style={{ border: 'none' }}>
+            <h1 className='text-lg font-bold'>{sensor_name} </h1>
+            <div className='flex flex-col items-start px-2' >
+              <div><span className='font-bold'>Updated:</span> {(new Date(sensor_ts*1000)).toLocaleString(navigator.language, {year:'numeric' ,month: 'short', day: '2-digit', hour:'numeric', minute:'numeric'})}<br /></div>
+              <div><span className='font-bold'>Humidity</span> <span className='font-bold'>{sensor_humidity}</span> </div>
+              <div><span className='font-bold'>---------------------</span></div>
+              <div><span className='font-bold'>10 min corr.</span> Average <span className='font-bold'>{sensor_pm2_10}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>30 min corr.</span> Average <span className='font-bold'>{sensor_pm2_30}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>1 hr corr.</span> Average <span className='font-bold'>{sensor_pm2_60}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>---------------------</span></div>
+              <div><span className='font-bold'>10 min raw.</span> Average <span className='font-bold'>{sensor[6]}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>30 min raw.</span> Average <span className='font-bold'>{sensor[7]}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>1 hr raw.</span> Average <span className='font-bold'>{sensor[8]}</span> μg m<sup>-3</sup></div>
+              <div><span className='font-bold'>---------------------</span></div>
+              <div><span className='font-bold' style={{ whiteSpace: 'pre-wrap' }}>{health_recommendation(sensor_AQHI_plus)}</span></div>
             </div>
         </div>
       </Tooltip>
