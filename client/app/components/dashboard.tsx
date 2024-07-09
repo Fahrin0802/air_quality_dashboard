@@ -356,17 +356,13 @@ export default function Dashboard({ sensors, alerts }: { sensors: any; alerts: A
             {/* Text in the middle */}
             <div className="flex-grow px-4">
             <p className="text-md">
-                This dashboard was developed by Roberto Villarreal, Jay Pasrija and Pranj Patel at the University of Alberta, in collaboration with the <a href = "https://tomorrowfoundation.ca/" className="text-blue-500 underline">Tomorrow Foundation</a>. Please contact aehussein@ualberta.ca with questions about it. 
+                This dashboard was developed by Roberto Villarreal, Jay Pasrija, Pranj Patel, and Fahrin Bushra at the University of Alberta. Please contact aehussein@ualberta.ca with questions about it. 
             </p>
             <br/>
             <p className="text-sm">
                 Weather Station AQHI values are sourced from: <a href = "https://api.weather.gc.ca/collections/aqhi-observations-realtime?lang=en" className="text-blue-500 underline">https://api.weather.gc.ca/</a> <br/>
                 Microsensor PM2.5 values are sourced from Purple Air sensors at: <a href = "https://api.purpleair.com/" className="text-blue-500 underline">https://api.purpleair.com/</a>
             </p>
-            </div>
-
-            <div className="flex-shrink-0">
-            <img src="/img/Tomorrow.jpg" alt="Tomorrrow Foundation" className="h-24 w-24 object-cover rounded-full"/>
             </div>
 
         </div>

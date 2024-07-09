@@ -102,14 +102,86 @@ function add_distance_to_ACA_station(all_station_aqhi_map: Map<any, any>, ulat: 
 
 }
 
+
+function corrected_pm25(raw_average_pm25: number, humidity: number){
+  var RH = humidity;
+  if (humidity < 30){
+    RH = 30;
+  } else if (humidity > 70){
+    RH = 70;
+  }
+
+  const PM = raw_average_pm25 /(1 + (0.24/((100/RH) - 1)));
+  // console.log("humidity", humidity, RH);
+  return PM;
+}
+
+
+const AQHI_PLUS = (pm25: number) => {
+  // DIVIDE BY 10 and ROUND IT UP
+  let aqhi_plus = -1;
+  if (0 <= pm25 && pm25 < 10){
+    aqhi_plus = 1;
+  }
+  else if (10 <= pm25 && pm25 < 20){
+    aqhi_plus = 2;
+  }
+  else if (20 <= pm25 && pm25 < 30){
+    aqhi_plus = 3;
+  }
+  else if (30 <= pm25 && pm25 < 40){
+    aqhi_plus = 4;
+  }
+  else if (40 <= pm25 && pm25 < 50){
+    aqhi_plus = 5;
+  }
+  else if (50 <= pm25 && pm25 < 60){
+    aqhi_plus = 6;
+  }
+  else if (60 <= pm25 && pm25 < 70){
+    aqhi_plus = 7;
+  }
+  else if (70 <= pm25 && pm25 < 80){
+    aqhi_plus = 8;
+  }
+  else if (80 <= pm25 && pm25 < 90){
+    aqhi_plus = 9;
+  }
+  else if (90 <= pm25 && pm25 < 100){
+    aqhi_plus = 10;
+  }
+  else if (100 <= pm25){
+    aqhi_plus = 11;
+  }
+  return aqhi_plus;
+}
+
 function get_three_closest_purple_sensors(data: any[][]): any[][] {
   // Sort the array based on the last element (distance) of each inner array
-  data.sort((a, b) => a[a.length - 1] - b[b.length - 1]);
+  data.sort((a, b) => a[11] - b[11]);
 
   // Return the first three elements of the sorted array
   console.log(data.slice(0, 3));
   return data.slice(0, 3);
 }
+
+function health_recommendation(index: number){
+  const array = [];
+  array[0]= "Health Risk: Low\nIdeal air quality for outdoor activities" ;
+  array[1]= "Health Risk: Low\nIdeal air quality for outdoor activities" ;
+  array[2]= "Health Risk: Low\nIdeal air quality for outdoor activities" ;
+  array[3]= "Health Risk: Low\nIdeal air quality for outdoor activities" ;
+  array[4]= "Health Risk: Moderate\nNo need to modify your usual outdoor\n activities unless you experience symptoms\n such as coughing and throat irritation";
+  array[5]= "Health Risk: Moderate\nNo need to modify your usual outdoor\n activities unless you experience symptoms\n such as coughing and throat irritation";
+  array[6]= "Health Risk: Moderate\nNo need to modify your usual outdoor\n activities unless you experience symptoms\n such as coughing and throat irritation";
+  array[7]= "Health Risk: High\nConsider reducing or rescheduling \n strenuous activities outdoors if you experience\n symptoms such as coughing and throat irritation";
+  array[8]= "Health Risk: High\nConsider reducing or rescheduling \n strenuous activities outdoors if you experience\n symptoms such as coughing and throat irritation";
+  array[9]= "Health Risk: High\nConsider reducing or rescheduling \n strenuous activities outdoors if you experience\n symptoms such as coughing and throat irritation";
+  array[10]= "Health Risk: Very High\nReduce or reschedule strenuous activities \n outdoors, especially if you experience symptoms\n such as coughing and throat irritation.";
+
+  return array[index];
+}
+
 
 /**
 * Fetch members of a PurpleAir group with specific fields.
@@ -117,7 +189,7 @@ function get_three_closest_purple_sensors(data: any[][]): any[][] {
 * @returns {Promise<Object>} - The API response.
 */
 async function get_purpleair_sensor_data(fields: string, ulat: number, ulon: number) {
-  const groupId = 2309;
+  const groupId = 2355;
   const apikey = "7EF0A72B-098D-11EF-B9F7-42010A80000D";
   const url = `https://api.purpleair.com/v1/groups/${groupId}/members`;
   const fullUrl = `${url}?fields=${encodeURIComponent(fields)}`;
@@ -137,6 +209,8 @@ async function get_purpleair_sensor_data(fields: string, ulat: number, ulon: num
   const data = datax["data"];
   for(const inner of data){
       inner.push(calculateDistance(inner[3], inner[4], ulat, ulon))
+      inner.push(corrected_pm25(inner[8], inner[5]));
+      inner.push(AQHI_PLUS(inner[12]));
   }
   return data;
 
@@ -199,7 +273,10 @@ export {
   get_three_closest_purple_sensors,
   fetch_ACA_Station_AQHI,
   add_distance_to_ACA_station,
-  fetch_ACA_Community_AQHI
+  fetch_ACA_Community_AQHI,
+  health_recommendation,
+  AQHI_PLUS,
+  corrected_pm25
 };
 
 

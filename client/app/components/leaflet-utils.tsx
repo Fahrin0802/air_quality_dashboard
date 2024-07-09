@@ -63,11 +63,11 @@ export function getColorRGB(index: number) {
   }
 }
 
-export function createPurpleAirSensorIcon(index: number) {
+export function createPurpleAirSensorIcon(sensor_corrected_pm25: number, index: number) {
   // circle icon
   const sensorIcon = divIcon({
     className: `rounded-full flex items-center justify-center font-bold text-white border-2 border-black ${getColor(index)}`,
-    html: `<h1 data-testid="purpleair-marker">${index}</h1>`,
+    html: `<h1 data-testid="purpleair-marker">${Math.round(sensor_corrected_pm25)}</h1>`,
     iconSize: [30, 30]
   });
 

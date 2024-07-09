@@ -241,7 +241,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                         {nearest_pm2.map((sensor, index) => (
                           <tr key={index}>
                             <td className="px-3 py-1.5 text-center">{sensor[2]}</td>
-                            <td className="px-3 py-1.5 text-center">{sensor[8]}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor[12].toFixed(2)}</td>
                             <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(2)}</td>
                           </tr>
                         ))}
@@ -249,17 +249,19 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     </table>
                   </div> 
 
-                  <img src="/img/pm2_scale.png" className="mx-auto my-4 w-30 h-90"/>
                 </div>
 
-                <div className="flex justify-center mt-4">
+                {/*<div className="flex justify-center mt-4">
                   <p className="bg-yellow-200 text-center rounded border p-2">
                     <strong style={{ fontSize: '18px' }}>
                         Follow <a href="https://www.canada.ca/en/environment-climate-change/services/air-quality-health-index/understanding-messages.html" className="text-blue-500 underline">recommendations</a> for an AQHI of {worst_value}
                     </strong>
                   </p>
+                </div>*/}
+                <div className="flex justify-center mt-4">
+                  <img src="/img/combined_scale.jpeg" style={{ width: '525px', height: '170px' }} />
                 </div>
-                <img src="/img/xAQHI.png" className="mx-auto my-4 w-96 h-30"/>
+                
 
                 <button 
                   onClick={toggle_popup} 
