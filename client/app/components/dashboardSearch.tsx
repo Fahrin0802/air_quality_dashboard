@@ -12,7 +12,8 @@ import {
   fetch_ACA_Station_AQHI,
   add_distance_to_ACA_station,
   fetch_ACA_Community_AQHI,
-  calculateDistance
+  calculateDistance,
+  getFullAddress
 } from "./utils"
 
 interface Station {
@@ -101,8 +102,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           const { latitude, longitude } = position.coords;
           setLat(latitude);
           setLon(longitude);
-          setAddress("Current Location");
-          extractCommunityAQHI("xx");
+          const tempAddress = await getFullAddress(latitude, longitude);
+          setAddress(tempAddress);
+          extractCommunityAQHI(tempAddress.split(',')[1].trim());
 
           const x = await fetch_ACA_Station_AQHI();
           set_all_station_aqhi_map(x);
