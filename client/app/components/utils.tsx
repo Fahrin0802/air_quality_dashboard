@@ -276,7 +276,8 @@ export {
   fetch_ACA_Community_AQHI,
   health_recommendation,
   AQHI_PLUS,
-  corrected_pm25
+  corrected_pm25,
+  getFullAddress
 };
 
 
@@ -313,7 +314,7 @@ export {
 // };
 
 const getFullAddress = async (lat: number, lon: number) => {
-  const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your API key
+  const apiKey = 'AIzaSyDLgLIvEJqYsfDNyKx-cYxp7hCyzpz-9ng'; // Replace with your API key
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`;
   
   try {
