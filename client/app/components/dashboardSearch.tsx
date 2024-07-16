@@ -13,6 +13,7 @@ import {
   add_distance_to_ACA_station,
   fetch_ACA_Community_AQHI,
   calculateDistance,
+  corrected_pm25,
   getFullAddress
 } from "./utils"
 
@@ -49,6 +50,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<Map<any, any>>({});
   const [nearest_pm2, set_nearest_pm2] = useState<any[][]>([]);
   const [all_pm2, set_all_pm2] = useState<any[][]>([]);
+  const [toggle_sensor, set_toggle_sensor] = useState(false);
 
 
   const toggle_popup = () => {
@@ -243,7 +245,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                         {nearest_pm2.map((sensor, index) => (
                           <tr key={index}>
                             <td className="px-3 py-1.5 text-center">{sensor[2]}</td>
-                            <td className="px-3 py-1.5 text-center">{sensor[12].toFixed(2)}</td>
+                            <td className="px-3 py-1.5 text-center">{toggle_sensor === true ? corrected_pm25(sensor[6], sensor[5]).toFixed(2) : sensor[12].toFixed(2)}</td>
                             <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(2)}</td>
                           </tr>
                         ))}
@@ -276,10 +278,26 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           </>
         )}
 
-          <Map all_pm2={all_pm2} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map} map={map} setMap={setMap}/>
+          <div className="flex items-center mt-4">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={toggle_sensor}
+                onChange={() => set_toggle_sensor(!toggle_sensor)}
+              />
+              <div className="w-12 h-7 bg-gray-200 rounded-full peer-checked:bg-blue-500 transition-colors duration-300"></div>
+              <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-300 transform peer-checked:translate-x-5"></div>
+            </label>
+            <span className="ml-3 text-gray-700 font-medium">
+              {toggle_sensor ? 'PM2.5 10 Minute Average' : 'PM2.5 60 Minute Average'}
+            </span>
+          </div>
+
+          <Map all_pm2={all_pm2} lat={lat} lon={lon} all_station_aqhi_map={all_station_aqhi_map} map={map} setMap={setMap} toggle_sensor={toggle_sensor}/>
       </div>
     )
-  }, [lat, lon, map, display_popup, all_pm2, all_station_aqhi_map])
+  }, [lat, lon, map, display_popup, all_pm2, all_station_aqhi_map, toggle_sensor])
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 w-full max-w-4xl mb-4">
