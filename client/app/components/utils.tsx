@@ -211,6 +211,7 @@ async function get_purpleair_sensor_data(fields: string, ulat: number, ulon: num
       inner.push(calculateDistance(inner[3], inner[4], ulat, ulon))
       inner.push(corrected_pm25(inner[8], inner[5]));
       inner.push(AQHI_PLUS(inner[12]));
+      
   }
   return data;
 

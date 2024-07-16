@@ -5,6 +5,13 @@ export default {
   theme: {
     extend: {},
   },
+  variants: {
+    extend: {
+      backgroundColor: ['checked'],
+      borderColor: ['checked'],
+      translate: ['checked'],
+    },
+  },
   plugins: [ 
     require('@tailwindcss/forms'),
   ],
