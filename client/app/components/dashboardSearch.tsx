@@ -248,7 +248,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                         {nearest_pm2.map((sensor, index) => (
                           <tr key={index}>
                             <td className="px-3 py-1.5 text-center">{sensor[2]}</td>
-                            <td className="px-3 py-1.5 text-center">{toggle_sensor === true ? corrected_pm25(sensor[6], sensor[5]).toFixed(2) : sensor[12].toFixed(2)}</td>
+                            <td className="px-3 py-1.5 text-center">{toggle_sensor === true ? corrected_pm25(sensor[6], sensor[5]).toFixed(1) : sensor[12].toFixed(1)}</td>
                             <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(1)}</td>
                           </tr>
                         ))}
@@ -343,6 +343,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                   className="w-full text-left p-2 text-sm hover:bg-gray-100 result"
                   onClick={async () => {
                     setAddress(result.address.freeformAddress);
+                    setCityName(extractCityName(result.address.freeformAddress));
                     extractCommunityAQHI(extractCityName(result.address.freeformAddress));
                     setLat(result.position.lat);
                     setLon(result.position.lon);
