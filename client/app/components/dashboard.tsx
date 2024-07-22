@@ -145,7 +145,7 @@ export default function Dashboard({ sensors, alerts }: { sensors: any; alerts: A
           </UnauthenticatedTemplate>
           <p className="mt-4 text-lg text-center">
             This dashboard reports the <a href="https://capitalairshed.ca/monitoring-data/aqhi/" className="text-blue-500 underline">AQHI</a> from <a href="https://airquality.alberta.ca/map/" className="text-blue-500 underline">Continuous Air Quality Monitoring Stations</a> and the PM2.5 concentration from <a href="https://map.purpleair.com/1/mAQI/a10/p604800/cC0#10.39/53.4941/-113.5398" className="text-blue-500 underline"> microsensors</a>, to provide up-to-date and local information
-            on your location . The recommended use of this dashboard is to monitor the AQHI from the Stations, which is calculated using 3 major pollutants (nitogen dioxide, ozone and PM2.5), and the
+            on your location . The recommended use of this dashboard is to monitor the AQHI from the Stations, which is calculated using 3 major pollutants (Nitrogen dioxide, Ozone and PM2.5), and the
             PM2.5 concentration from the microsensors for risk assessment.
           </p>
         </div>

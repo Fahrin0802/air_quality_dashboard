@@ -45,7 +45,8 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
   const [addressSearchResults, setAddressSearchResults] = useState([]);
   const [address, setAddress] = useState("");
   const addressSearchRef = useRef<HTMLElement | null>(null);
-  
+  const [cityName, setCityName] = useState("");
+
   const [nearest_station_AQHI, set_nearest_station_AQHI] = useState<Station[]>([]);
   const [all_station_aqhi_map, set_all_station_aqhi_map] = useState<Map<any, any>>({});
   const [nearest_pm2, set_nearest_pm2] = useState<any[][]>([]);
@@ -104,7 +105,9 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
           const { latitude, longitude } = position.coords;
           setLat(latitude);
           setLon(longitude);
+
           const tempAddress = await getFullAddress(latitude, longitude);
+          setCityName(tempAddress.split(',')[1].trim());
           setAddress(tempAddress);
           extractCommunityAQHI(tempAddress.split(',')[1].trim());
 
@@ -202,10 +205,10 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                   <div className="flex-1 bg-white rounded-lg shadow m-1 p-4 overflow-x-auto">
                     <h4 className="block text-med font-medium border-b text-black-700 text-center"> Continuous Monitoring Stations (NO2, O3, PM2.5)</h4>
                     {/* <h4 className="block text-med font-medium text-gray-700 text-center"> (NO2, O3, PM2.5) </h4> */}
-                      <p className="text-center p-2">
-                          {/* <strong style={{ fontSize: '20px' }}> */}
-                              Community AQHI: {parseFloat(community_AQHI).toFixed(2)}
-                          {/* </strong> */}
+                      <p className="bg-200 bg-blue text-center p-2">
+                          <strong style={{ fontSize: '16px' }}>
+                              {cityName} AQHI: {parseFloat(community_AQHI).toFixed(0)}
+                          </strong>
                       </p>
                       <table className="min-w-full">
                       <thead>
@@ -220,7 +223,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                           <tr key={index}>
                             <td className="px-3 py-1.5 text-center">{sensor.StationName}</td>
                             <td className="px-3 py-1.5 text-center">{sensor.AqhiStatus}</td>
-                            <td className="px-3 py-1.5 text-center">{sensor.distance ? sensor.distance.toFixed(2) : 0 }</td>
+                            <td className="px-3 py-1.5 text-center">{sensor.distance ? sensor.distance.toFixed(1) : 0 }</td>
                           </tr>
                         ))}
                       </tbody>
@@ -245,8 +248,8 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                         {nearest_pm2.map((sensor, index) => (
                           <tr key={index}>
                             <td className="px-3 py-1.5 text-center">{sensor[2]}</td>
-                            <td className="px-3 py-1.5 text-center">{toggle_sensor === true ? corrected_pm25(sensor[6], sensor[5]).toFixed(2) : sensor[12].toFixed(2)}</td>
-                            <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(2)}</td>
+                            <td className="px-3 py-1.5 text-center">{toggle_sensor === true ? corrected_pm25(sensor[6], sensor[5]).toFixed(1) : sensor[12].toFixed(1)}</td>
+                            <td className="px-3 py-1.5 text-center">{sensor[11].toFixed(1)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -340,6 +343,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                   className="w-full text-left p-2 text-sm hover:bg-gray-100 result"
                   onClick={async () => {
                     setAddress(result.address.freeformAddress);
+                    setCityName(extractCityName(result.address.freeformAddress));
                     extractCommunityAQHI(extractCityName(result.address.freeformAddress));
                     setLat(result.position.lat);
                     setLon(result.position.lon);
