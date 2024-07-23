@@ -85,7 +85,7 @@ export const LegendControl = createControlComponent(
         if (i === 0)
           aqhi_value.innerHTML = "-"
         else if (i === 11)
-          aqhi_value.innerHTML = "11+"
+          aqhi_value.innerHTML = "10+"
         else
           aqhi_value.innerHTML = i.toString()
     
