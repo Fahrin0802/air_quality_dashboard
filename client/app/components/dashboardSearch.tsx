@@ -207,7 +207,7 @@ export function DashboardSearch({ sensors }: { sensors: any }) {
                     {/* <h4 className="block text-med font-medium text-gray-700 text-center"> (NO2, O3, PM2.5) </h4> */}
                       <p className="bg-200 bg-blue text-center p-2">
                           <strong style={{ fontSize: '16px' }}>
-                              {cityName} AQHI: {parseFloat(community_AQHI).toFixed(0)}
+                              {cityName} AQHI: {parseFloat(community_AQHI) > 10 ? "10+" : parseFloat(community_AQHI).toFixed(0)}
                           </strong>
                       </p>
                       <table className="min-w-full">
